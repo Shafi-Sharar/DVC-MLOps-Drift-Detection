@@ -1,0 +1,109 @@
+schema: '2.0'
+stages:
+  stage_01_prepare:
+    cmd: python src/stage_01_prepare.py --config=config/config.yaml 
+      --params=params.yaml
+    deps:
+    - path: Anime.csv
+      hash: md5
+      md5: 239fb4e7be0691141c6eb2c8781facef
+      size: 16626921
+    - path: config/config.yaml
+      hash: md5
+      md5: 88ae223ec93dc618227742402123d004
+      size: 409
+    - path: src/stage_01_prepare.py
+      hash: md5
+      md5: c8ae60d8aebebe951847b8af02b33c92
+      size: 1583
+    outs:
+    - path: processed_data.csv
+      hash: md5
+      md5: 699b3c79a0171fb501a874c3c273c6d9
+      size: 5941609
+  stage_02_split:
+    cmd: python src/stage_02_split.py --config=config/config.yaml 
+      --params=params.yaml
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 88ae223ec93dc618227742402123d004
+      size: 409
+    - path: params.yaml
+      hash: md5
+      md5: 6f76ddd4b1fac256ea4a3b69c4b85f1a
+      size: 183
+    - path: processed_data.csv
+      hash: md5
+      md5: 699b3c79a0171fb501a874c3c273c6d9
+      size: 5941609
+    - path: src/stage_02_split.py
+      hash: md5
+      md5: 7c8ff492908584c1953938adfab20803
+      size: 1069
+    outs:
+    - path: test.csv
+      hash: md5
+      md5: 7bdb8afccc8306de5ee304b040d21707
+      size: 893764
+    - path: train.csv
+      hash: md5
+      md5: 690e69275c234872d800f277a57b1211
+      size: 4159751
+    - path: val.csv
+      hash: md5
+      md5: ff5c6565ea934cecf3cf81497fc12c84
+      size: 893728
+  stage_03_train:
+    cmd: python src/stage_03_train.py --config=config/config.yaml 
+      --params=params.yaml
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 88ae223ec93dc618227742402123d004
+      size: 409
+    - path: params.yaml
+      hash: md5
+      md5: 6f76ddd4b1fac256ea4a3b69c4b85f1a
+      size: 183
+    - path: src/stage_03_train.py
+      hash: md5
+      md5: cd98f0a9f1411f6a6e21164a15171f38
+      size: 1181
+    - path: train.csv
+      hash: md5
+      md5: 690e69275c234872d800f277a57b1211
+      size: 4159751
+    - path: val.csv
+      hash: md5
+      md5: ff5c6565ea934cecf3cf81497fc12c84
+      size: 893728
+    outs:
+    - path: xgb_model.json
+      hash: md5
+      md5: dbcec8c8eaf7d46d9af942cfb2daa312
+      size: 551477
+  stage_04_evaluate:
+    cmd: python src/stage_04_evaluate.py --config=config/config.yaml
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 88ae223ec93dc618227742402123d004
+      size: 409
+    - path: src/stage_04_evaluate.py
+      hash: md5
+      md5: 78f24f0f275905531d39d4c6fa76798f
+      size: 1225
+    - path: test.csv
+      hash: md5
+      md5: 7bdb8afccc8306de5ee304b040d21707
+      size: 893764
+    - path: xgb_model.json
+      hash: md5
+      md5: dbcec8c8eaf7d46d9af942cfb2daa312
+      size: 551477
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: cf3d5c0eccbedc8f50a4b5da9370785f
+      size: 154
