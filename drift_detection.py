@@ -1,21 +1,27 @@
 import pandas as pd
 from river import drift
+from evidently import Report
+from evidently.presets import DataDriftPreset
 
-data = pd.read_csv("test.csv")
+reference_data = pd.read_csv("train.csv")
+current_data = pd.read_csv("test.csv")
 
-drift_detector = drift.ADWIN()
+adwin = drift.ADWIN()
 drift_detected = False
 
-print("Checking for Concept Drift")
-
-for index, row in data.iterrows():
-    val = row.iloc[0]
-    drift_detector.update(val)
-
-    if drift_detector.drift_detected:
-        print(f"Drift detected at row {index}!")
+for val in current_data.iloc[:, 0]: 
+    adwin.update(val)
+    if adwin.drift_detected:
         drift_detected = True
         break
 
 with open("drift_status.txt", "w") as f:
     f.write("DRIFT_DETECTED" if drift_detected else "NO_DRIFT")
+
+report = Report(metrics=[DataDriftPreset()])
+eval_result=report.run(reference_data=reference_data, current_data=current_data)
+eval_result.save_html("drift_report.html")
+
+
+print("Visual report saved as 'drift_report.html'")
+print(f"Overall Drift Status: {'DRIFT_DETECTED' if drift_detected else 'NO_DRIFT'}")
