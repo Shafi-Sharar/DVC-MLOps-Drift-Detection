@@ -107,3 +107,65 @@ stages:
       hash: md5
       md5: cf3d5c0eccbedc8f50a4b5da9370785f
       size: 154
+  prepare:
+    cmd: python src/stage_01_prepare.py
+    deps:
+    - path: Anime.csv
+      hash: md5
+      md5: 239fb4e7be0691141c6eb2c8781facef
+      size: 16626921
+    - path: src/stage_01_prepare.py
+      hash: md5
+      md5: c8ae60d8aebebe951847b8af02b33c92
+      size: 1583
+    outs:
+    - path: processed_data.csv
+      hash: md5
+      md5: 699b3c79a0171fb501a874c3c273c6d9
+      size: 5941609
+  split:
+    cmd: python src/stage_02_split.py
+    deps:
+    - path: processed_data.csv
+      hash: md5
+      md5: 699b3c79a0171fb501a874c3c273c6d9
+      size: 5941609
+    - path: src/stage_02_split.py
+      hash: md5
+      md5: 7c8ff492908584c1953938adfab20803
+      size: 1069
+  train:
+    cmd: python src/stage_03_train.py
+    deps:
+    - path: src/stage_03_train.py
+      hash: md5
+      md5: cd98f0a9f1411f6a6e21164a15171f38
+      size: 1181
+  evaluate:
+    cmd: python src/stage_04_evaluate.py
+    deps:
+    - path: src/stage_04_evaluate.py
+      hash: md5
+      md5: 78f24f0f275905531d39d4c6fa76798f
+      size: 1225
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: cf3d5c0eccbedc8f50a4b5da9370785f
+      size: 154
+  drift_detection:
+    cmd: python drift_detection.py
+    deps:
+    - path: drift_detection.py
+      hash: md5
+      md5: aa03a49cfbfbe6cd60194662fe8621c8
+      size: 822
+    - path: processed_data.csv
+      hash: md5
+      md5: 699b3c79a0171fb501a874c3c273c6d9
+      size: 5941609
+    outs:
+    - path: drift_status.txt
+      hash: md5
+      md5: 7f881a20fd5a15ee5b85bcba7139e358
+      size: 14
